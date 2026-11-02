@@ -1,5 +1,5 @@
 /* Shooter Games engine. Each game page calls SSG.createGame(config).
-   Created by Ehsan Ashourzadeh (SMART English). Vanilla JS, no dependencies. */
+   Created by Ehsan Ashour Zadeh (SMART English). Vanilla JS, no dependencies. */
 (function (global) {
   "use strict";
   const SSG = {};
@@ -190,7 +190,7 @@
         <div class="tiles" id="tiles"></div>
         <button class="btn-howto" id="btn-howto">How To Play</button>
         <div class="progress" id="progress"></div>
-        <!-- <div class="credit">© SMART ENGLISH · Created by Ehsan Ashourzadeh</div> -->
+        <!-- <div class="credit">© SMART ENGLISH · Created by Ehsan Ashour Zadeh</div> -->
       </section>
       <section class="screen play" id="s-play">
         <div class="hud">
@@ -217,7 +217,7 @@
       <div class="modal" id="howto"><div class="card">
         <h2>${cfg.welcome}</h2>
         <ul class="rules">${cfg.rules.map((r) => `<li>${r}</li>`).join("")}</ul>
-        <div class="by"><strong>Created by Ehsan Ashourzadeh</strong>© SMART ENGLISH, 2019 · All rights reserved.</div>
+        <div class="by"><strong>Created by Ehsan Ashour Zadeh</strong>© SMART ENGLISH, 2019 · All rights reserved.</div>
         <button class="close" id="btn-close">Got it</button>
       </div></div>`;
     document.body.insertAdjacentHTML(
@@ -491,7 +491,7 @@
           const rb = $("rRibbon");
           rb.className = "ribbon" + (win ? " win" : "");
           rb.innerHTML = win
-            ? "Welldone! Your answer is correct."
+            ? "Well done! Your answer is correct."
             : `Sorry! You didn't find the answer.<small>${reason === "time" ? "Time's up." : "No lives left."}</small>`;
           $("rAns").innerHTML = cfg.answerHTML(it);
           show(sResult);

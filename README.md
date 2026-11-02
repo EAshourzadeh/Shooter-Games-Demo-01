@@ -45,7 +45,7 @@ No installation, framework, package manager, or build step is required.
 2. Open `index.html` in a modern web browser.
 3. Choose **Number Shooter** or **Letter Shooter**.
 
-Or open https://shooters-demo.learninglabs.workers.dev/ in any modern web browser.
+Or open https://shooters-demo.learninglabs.workers.dev/ in any modern web browser .
 
 The demo requests Fredoka and Lilita One from Google Fonts. If no internet connection is available, the games continue with their built-in fallback fonts.
 

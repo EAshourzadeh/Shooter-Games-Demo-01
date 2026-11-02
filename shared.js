@@ -217,7 +217,7 @@
       <div class="modal" id="howto"><div class="card">
         <h2>${cfg.welcome}</h2>
         <ul class="rules">${cfg.rules.map((r) => `<li>${r}</li>`).join("")}</ul>
-        <div class="by"><strong>Created by Ehsan Ashour Zadeh</strong>© SMART ENGLISH, 2019 · All rights reserved.</div>
+        <div class="by"><strong>Created by Ehsan Ashour Zadeh</strong>© SMART ENGLISH, 2026 · All rights reserved.</div>
         <button class="close" id="btn-close">Got it</button>
       </div></div>`;
     document.body.insertAdjacentHTML(

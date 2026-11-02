@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Letter Shooter</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Lilita+One&display=swap"
+    />
+    <link rel="stylesheet" href="shared.css" />
+    <style>
+      .pic {
+        position: absolute;
+        left: 330px;
+        top: 28px;
+        width: 620px;
+        height: 440px;
+        border-radius: 30px;
+        border: 10px solid #fff;
+        z-index: 1;
+        background: linear-gradient(var(--g1), var(--g2));
+        box-shadow: 0 12px 0 rgba(0, 0, 0, 0.14);
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+      }
+      .pic::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 90px;
+        background: linear-gradient(#7fd05c, #4cae43);
+        border-top: 6px solid #fff8;
+      }
+      .pic .em {
+        position: relative;
+        z-index: 2;
+        font-size: 230px;
+        line-height: 1;
+        margin-top: -20px;
+        animation: bob 3s ease-in-out infinite;
+        font-family:
+          "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      }
+      .pic .sh {
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        bottom: 70px;
+        width: 200px;
+        height: 26px;
+        margin-left: -100px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.16);
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(-14px);
+        }
+      }
+      .ltr {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 76px;
+        height: 76px;
+        z-index: 5;
+        will-change: transform;
+      }
+      .ltr .d {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font: 54px/1 var(--font-display);
+        color: #fff;
+        -webkit-text-stroke: 6px var(--ink);
+        paint-order: stroke fill;
+        padding-bottom: 6px;
+        background:
+          radial-gradient(
+            circle at 32% 28%,
+            rgba(255, 255, 255, 0.9) 0 8%,
+            transparent 9%
+          ),
+          radial-gradient(circle at 40% 36%, var(--c1), var(--c2));
+        box-shadow:
+          inset -7px -9px 14px rgba(0, 0, 0, 0.2),
+          0 6px 10px rgba(0, 0, 0, 0.14);
+        border: 4px solid #fff;
+        transition:
+          opacity 0.25s,
+          filter 0.25s;
+      }
+      .ltr.used .d {
+        opacity: 0.45;
+        filter: grayscale(0.8);
+        border-style: dashed;
+      }
+      .ltr.used::after {
+        content: "✓";
+        position: absolute;
+        right: -4px;
+        top: -6px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--mint);
+        color: #fff;
+        font: 700 20px/30px var(--font-body);
+        text-align: center;
+        border: 3px solid #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewport"><div id="stage"></div></div>
+    <script src="shared.js"></script>
+    <script>
+      /* ====== Teacher settings (edit these) ====== */
+      const WORDS = [
+        { w: "helicopter", e: "🚁", g: ["#8fd4ff", "#e8f8ff"] },
+        { w: "camp", e: "⛺", g: ["#ffb36b", "#ffe9b8"] },
+        { w: "rabbit", e: "🐰", g: ["#b6e6ff", "#f3fbff"] },
+        { w: "apple", e: "🍎", g: ["#ffd1d1", "#fff5e6"] },
+        { w: "elephant", e: "🐘", g: ["#cfe3ff", "#f2f7ff"] },
+        { w: "pizza", e: "🍕", g: ["#ffe08a", "#fff6d6"] },
+        { w: "rocket", e: "🚀", g: ["#3a3f9e", "#9aa4ff"] },
+        { w: "banana", e: "🍌", g: ["#fff2a8", "#fffbe0"] },
+        { w: "school", e: "🏫", g: ["#a8dcff", "#eaf8ff"] },
+        { w: "guitar", e: "🎸", g: ["#e0c6ff", "#f6edff"] },
+        { w: "butterfly", e: "🦋", g: ["#b5f0c8", "#f0fff5"] },
+        { w: "umbrella", e: "☂️", g: ["#b8d4ff", "#e9f0ff"] },
+      ];
+      const EXTRA_LETTERS = 7; // wrong letters floating around
+      /* =========================================== */
+
+      const ABC = "abcdefghijklmnopqrstuvwxyz".split("");
+      const COLORS = [
+        ["#ff8ac8", "#e0207f"],
+        ["#6fd0ff", "#1b86e0"],
+        ["#a6e86a", "#3aa63a"],
+        ["#ffe45a", "#f0a500"],
+        ["#ff7b7b", "#d62828"],
+        ["#cba6ff", "#7b3fe4"],
+        ["#ffbe5c", "#ff7a00"],
+      ];
+
+      SSG.createGame({
+        title: "Letter Shooter",
+        hubUrl: "index.html",
+        tileStyle: "badge",
+        tileName: "word",
+        items: WORDS,
+        answerLabel: "Correct word:",
+        answerHTML: (it) => it.w,
+        welcome:
+          "Welcome to the letter shooting game!<br>Your mission is to shoot the missing letter(s) in the given word.",
+        rules: [
+          "You have to shoot the missing letter in less than 2 minutes.",
+          "You have a limited number of lives.",
+          "You shouldn't shoot a letter twice.",
+        ],
+
+        start(item, i, api) {
+          const word = item.w;
+          const chars = [...new Set(word.split(""))];
+          const k = word.length >= 7 ? 2 : 1;
+          const missing = new Set(SSG.shuffle(chars).slice(0, k));
+          const filled = new Set();
+          const wrongShot = new Set();
+
+          api.field.insertAdjacentHTML(
+            "beforeend",
+            `<div class="pic" style="--g1:${item.g[0]};--g2:${item.g[1]}"><div class="sh"></div><div class="em">${item.e}</div></div>`,
+          );
+
+          function banner() {
+            const s = word
+              .split("")
+              .map((c) =>
+                !missing.has(c)
+                  ? c
+                  : filled.has(c)
+                    ? `<span class="blank fill">${c}</span>`
+                    : '<span class="blank">&nbsp;&nbsp;</span>',
+              )
+              .join("");
+            api.setBanner(`word ${i + 1} : ${s}`);
+          }
+          banner();
+
+          const letters = [];
+          const free = () =>
+            ABC.filter(
+              (c) =>
+                !word.includes(c) &&
+                !wrongShot.has(c) &&
+                !letters.some((l) => l.c === c),
+            );
+
+          function spawn(c, fromBottom) {
+            const col = SSG.pick(COLORS);
+            const el = document.createElement("div");
+            el.className = "ltr";
+            el.style.setProperty("--c1", col[0]);
+            el.style.setProperty("--c2", col[1]);
+            el.innerHTML = `<div class="d">${c}</div>`;
+            const dir = Math.random() < 0.5 ? -1 : 1;
+            const l = {
+              el,
+              c,
+              used: false,
+              x: SSG.rand(20, api.W - 100),
+              y: fromBottom ? api.H : SSG.rand(20, api.H - 100),
+              vx: dir * SSG.rand(60, 130),
+              vy: SSG.rand(35, 80) * (Math.random() < 0.5 ? 1 : -1),
+              ph: Math.random() * 6.28,
+            };
+            api.field.appendChild(el);
+            letters.push(l);
+            el.addEventListener("pointerdown", (e) => {
+              e.stopPropagation();
+              if (!api.active) return;
+              const p = api.pt(e);
+              SSG.sfx.shot();
+              if (missing.has(c)) {
+                if (l.used) {
+                  api.hurt(p.x, p.y, "TWICE!");
+                  api.toast("Don't shoot the same letter twice!");
+                  return;
+                }
+                l.used = true;
+                el.classList.add("used");
+                filled.add(c);
+                api.sparkle(p.x, p.y);
+                banner();
+                if (filled.size === missing.size) api.win(p.x, p.y);
+              } else {
+                api.pop(p.x, p.y, [col[0], col[1], "#fff"]);
+                el.remove();
+                letters.splice(letters.indexOf(l), 1);
+                wrongShot.add(c);
+                api.hurt(p.x, p.y);
+                const f = free();
+                if (f.length) spawn(SSG.pick(f), true);
+              }
+            });
+          }
+          [...missing].forEach((c) => spawn(c));
+          const extras = SSG.shuffle(free()).slice(0, EXTRA_LETTERS);
+          extras.forEach((c) => spawn(c));
+
+          api.onFrame((dt, elapsed) => {
+            const speed = 1 + Math.min(elapsed / 120, 1) * 0.6;
+            for (const l of letters) {
+              l.x += l.vx * dt * speed;
+              l.y += l.vy * dt * speed;
+              l.ph += dt * 2.4;
+              if (l.x < 0) {
+                l.x = 0;
+                l.vx = Math.abs(l.vx);
+              }
+              if (l.x > api.W - 76) {
+                l.x = api.W - 76;
+                l.vx = -Math.abs(l.vx);
+              }
+              if (l.y < 0) {
+                l.y = 0;
+                l.vy = Math.abs(l.vy);
+              }
+              if (l.y > api.H - 76) {
+                l.y = api.H - 76;
+                l.vy = -Math.abs(l.vy);
+              }
+              l.el.style.transform = `translate(${l.x.toFixed(1)}px,${l.y.toFixed(1)}px) rotate(${(Math.sin(l.ph) * 10).toFixed(1)}deg)`;
+            }
+          });
+        },
+      });
+    </script>
+  </body>
+</html>

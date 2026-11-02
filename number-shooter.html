@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Number Shooter</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Lilita+One&display=swap"
+    />
+    <link rel="stylesheet" href="shared.css" />
+    <style>
+      .balloon {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 88px;
+        height: 128px;
+        will-change: transform;
+      }
+      .balloon .b {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 88px;
+        height: 104px;
+        border-radius: 50% 50% 47% 47% / 56% 56% 44% 44%;
+        background:
+          radial-gradient(
+            circle at 30% 26%,
+            rgba(255, 255, 255, 0.85) 0 7%,
+            transparent 8%
+          ),
+          radial-gradient(circle at 38% 32%, var(--c1), var(--c2));
+        box-shadow:
+          inset -9px -12px 20px rgba(0, 0, 0, 0.18),
+          0 6px 10px rgba(0, 0, 0, 0.12);
+        display: grid;
+        place-items: center;
+        font: 38px/1 var(--font-display);
+        color: #fff;
+        -webkit-text-stroke: 5px var(--ink);
+        paint-order: stroke fill;
+      }
+      .balloon .b::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -9px;
+        margin-left: -8px;
+        border: 8px solid transparent;
+        border-bottom-color: var(--c2);
+        border-top: 0;
+        transform: none;
+      }
+      .balloon .s {
+        position: absolute;
+        left: 50%;
+        top: 106px;
+        width: 2px;
+        height: 22px;
+        background: rgba(29, 43, 79, 0.45);
+      }
+      .bunny {
+        position: absolute;
+        left: 490px;
+        top: 40px;
+        z-index: 1;
+        filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.08));
+      }
+      .balloon {
+        z-index: 5;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewport"><div id="stage"></div></div>
+    <script src="shared.js"></script>
+    <script>
+      /* ====== Teacher settings (edit these) ====== */
+      const WORDS = [
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six",
+        "seven",
+        "eight",
+        "nine",
+        "ten",
+        "eleven",
+        "twelve",
+        "thirteen",
+        "fourteen",
+        "fifteen",
+        "sixteen",
+        "seventeen",
+        "eighteen",
+        "nineteen",
+        "twenty",
+      ];
+      const MAX_NUMBER = 20; // balloons show 1 to this number
+      const QUESTIONS = 9; // how many stars on the menu
+      const BALLOONS = 8; // balloons on screen at once
+      /* =========================================== */
+
+      const pool = SSG.shuffle(
+        WORDS.map((w, i) => ({ word: w, n: i + 1 })),
+      ).slice(0, QUESTIONS);
+      const COLORS = [
+        ["#ff8ac8", "#e0207f"],
+        ["#6fd0ff", "#1b86e0"],
+        ["#a6e86a", "#3aa63a"],
+        ["#ffe45a", "#f0a500"],
+        ["#ff7b7b", "#d62828"],
+        ["#cba6ff", "#7b3fe4"],
+        ["#ffbe5c", "#ff7a00"],
+      ];
+
+      function bunny(label, word) {
+        return `<svg class="bunny" width="300" height="380" viewBox="0 0 300 380" aria-hidden="true">
+    <g stroke="#cdb9dd" stroke-width="4">
+      <g transform="rotate(-8 108 130)"><ellipse cx="108" cy="72" rx="27" ry="64" fill="#fff"/><ellipse cx="108" cy="78" rx="12" ry="42" fill="#ffb3cf" stroke="none"/></g>
+      <g transform="rotate(8 192 130)"><ellipse cx="192" cy="72" rx="27" ry="64" fill="#fff"/><ellipse cx="192" cy="78" rx="12" ry="42" fill="#ffb3cf" stroke="none"/></g>
+      <ellipse cx="150" cy="172" rx="84" ry="70" fill="#fff"/>
+      <ellipse cx="108" cy="338" rx="30" ry="18" fill="#fff"/><ellipse cx="192" cy="338" rx="30" ry="18" fill="#fff"/>
+    </g>
+    <circle cx="122" cy="160" r="7" fill="#1d2b4f"/><circle cx="178" cy="160" r="7" fill="#1d2b4f"/>
+    <circle cx="124" cy="157" r="2.5" fill="#fff"/><circle cx="180" cy="157" r="2.5" fill="#fff"/>
+    <circle cx="104" cy="182" r="11" fill="#ffb3cf" opacity=".7"/><circle cx="196" cy="182" r="11" fill="#ffb3cf" opacity=".7"/>
+    <ellipse cx="150" cy="178" rx="9" ry="6" fill="#ff7aa8"/>
+    <path d="M150 184v8M150 192q-9 9-18 2M150 192q9 9 18 2" fill="none" stroke="#1d2b4f" stroke-width="3" stroke-linecap="round"/>
+    <path d="M70 176l-34-8M70 188l-36 6M230 176l34-8M230 188l36 6" stroke="#b8a5c9" stroke-width="3" stroke-linecap="round"/>
+    <rect x="34" y="226" width="232" height="94" rx="14" fill="#d3ecd8" stroke="#6fae83" stroke-width="6"/>
+    <text x="150" y="288" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="44" fill="#1d2b4f"><tspan fill="#d9693b">${label})</tspan> ${word}</text>
+    <ellipse cx="62" cy="228" rx="22" ry="14" fill="#fff" stroke="#cdb9dd" stroke-width="4"/><ellipse cx="238" cy="228" rx="22" ry="14" fill="#fff" stroke="#cdb9dd" stroke-width="4"/>
+  </svg>`;
+      }
+
+      SSG.createGame({
+        title: "Number Shooter",
+        hubUrl: "index.html",
+        tileStyle: "star",
+        tileName: "Number",
+        items: pool,
+        answerLabel: "Correct number:",
+        answerHTML: (it) => `${it.word}<span class="n">${it.n}</span>`,
+        welcome:
+          "Welcome to the number shooting game!<br>Your mission is to shoot the correct number that matches the given word.",
+        rules: [
+          "You have to shoot the correct number in less than 2 minutes.",
+          "You have a limited number of lives.",
+          "Shooting a wrong number costs you a life.",
+        ],
+
+        start(item, i, api) {
+          api.field.insertAdjacentHTML("beforeend", bunny(i + 1, item.word));
+          api.setBanner(`Number ${i + 1} : ${item.word}`);
+          const balloons = [];
+          const inPlay = () => new Set(balloons.map((b) => b.n));
+
+          function spawn(correct, fromBottom) {
+            let n = item.n;
+            if (!correct) {
+              const used = inPlay();
+              do {
+                n = 1 + Math.floor(Math.random() * MAX_NUMBER);
+              } while (n === item.n || used.has(n));
+            }
+            const col = SSG.pick(COLORS);
+            const el = document.createElement("div");
+            el.className = "balloon";
+            el.style.setProperty("--c1", col[0]);
+            el.style.setProperty("--c2", col[1]);
+            el.innerHTML = `<div class="b">${n}</div><div class="s"></div>`;
+            const dir = Math.random() < 0.5 ? -1 : 1;
+            const b = {
+              el,
+              n,
+              x: SSG.rand(20, api.W - 110),
+              y: fromBottom ? api.H : SSG.rand(20, api.H - 140),
+              vx: dir * SSG.rand(50, 110),
+              vy: -SSG.rand(25, 70) * (Math.random() < 0.7 ? 1 : -1),
+              ph: Math.random() * 6.28,
+            };
+            api.field.appendChild(el);
+            balloons.push(b);
+            el.addEventListener("pointerdown", (e) => {
+              e.stopPropagation();
+              if (!api.active) return;
+              const p = api.pt(e);
+              SSG.sfx.shot();
+              api.pop(p.x, p.y, [col[0], col[1], "#fff"]);
+              el.remove();
+              balloons.splice(balloons.indexOf(b), 1);
+              if (n === item.n) api.win(p.x, p.y);
+              else {
+                api.hurt(p.x, p.y);
+                spawn(false, true);
+              }
+            });
+            return b;
+          }
+          spawn(true);
+          while (balloons.length < BALLOONS) spawn(false);
+
+          api.onFrame((dt, elapsed) => {
+            const speed = 1 + Math.min(elapsed / 120, 1) * 0.7; // balloons get faster as time runs out
+            for (const b of balloons) {
+              b.x += b.vx * dt * speed;
+              b.y += b.vy * dt * speed;
+              b.ph += dt * 2;
+              if (b.x < 0) {
+                b.x = 0;
+                b.vx = Math.abs(b.vx);
+              }
+              if (b.x > api.W - 88) {
+                b.x = api.W - 88;
+                b.vx = -Math.abs(b.vx);
+              }
+              if (b.y < 0) {
+                b.y = 0;
+                b.vy = Math.abs(b.vy);
+              }
+              if (b.y > api.H - 128) {
+                b.y = api.H - 128;
+                b.vy = -Math.abs(b.vy);
+              }
+              b.el.style.transform = `translate(${b.x.toFixed(1)}px,${b.y.toFixed(1)}px) rotate(${(Math.sin(b.ph) * 6 + b.vx * 0.04).toFixed(1)}deg)`;
+            }
+          });
+        },
+      });
+    </script>
+  </body>
+</html>

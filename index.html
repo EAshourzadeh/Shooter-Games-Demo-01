@@ -1,0 +1,410 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font:
+          14px -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: #fff;
+        color: #000;
+      }
+      img {
+        max-width: 100%;
+      }
+      [hidden]:not([hidden="until-found" i]) {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <title>SMART Shooter Games</title>
+    <meta name="claude:viewport-fit-sides" content="cover" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Lilita+One&display=swap"
+    />
+    <style>
+      /* Layout: sky-coloured page, one centred column; two game cards side by side, wrapping to one column on phones. */
+      :root {
+        --sky: #d9f1ff;
+        --sky2: #a9dcf7;
+        --navy: #0c1a78;
+        --blue: #1d44e6;
+        --gold: #ffc83d;
+        --coral: #ff5a5f;
+        --ink: #1d2b4f;
+        --paper: #fffaf0;
+        --mint: #25b886;
+        --muted: #4a5a82;
+        --display:
+          "Lilita One", "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+        --body: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(
+            var(--sky2),
+            var(--sky) 380px,
+            #bfeaa6 900px
+          )
+          no-repeat #bfeaa6;
+        color: var(--ink);
+        font-family: var(--body);
+        padding-block: 40px 56px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        min-height: 100vh;
+      }
+      main {
+        max-width: 1020px;
+        margin: 0 auto;
+      }
+      .eyebrow {
+        font: 600 16px/1 var(--body);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--blue);
+      }
+      h1 {
+        margin: 12px 0 10px;
+        font: clamp(44px, 8vw, 84px)/0.98 var(--display);
+        color: var(--gold);
+        -webkit-text-stroke: 10px var(--navy);
+        paint-order: stroke fill;
+        text-wrap: balance;
+        transform: rotate(-1deg);
+        text-shadow: 0 6px 0 rgba(12, 26, 120, 0.22);
+      }
+      .lede {
+        max-width: 56ch;
+        margin: 18px 0 34px;
+        font-size: 20px;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+        gap: 24px;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        background: var(--paper);
+        border-radius: 26px;
+        overflow: hidden;
+        box-shadow: 0 10px 0 rgba(12, 26, 120, 0.2);
+      }
+      .art {
+        position: relative;
+        height: 210px;
+        overflow: hidden;
+        background: linear-gradient(#6ec3f4, #dff5ff 70%);
+      }
+      .art::after {
+        content: "";
+        position: absolute;
+        left: -10%;
+        right: -10%;
+        bottom: -40px;
+        height: 90px;
+        background: #6cc24a;
+        border-radius: 50% 50% 0 0;
+      }
+      .art i {
+        position: absolute;
+        font-style: normal;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font: 34px/1 var(--display);
+        -webkit-text-stroke: 5px var(--ink);
+        paint-order: stroke fill;
+      }
+      .bal {
+        width: 62px;
+        height: 74px;
+        border-radius: 50% 50% 47% 47%/56% 56% 44% 44%;
+        background: radial-gradient(circle at 35% 30%, var(--a), var(--b));
+        box-shadow: inset -6px -8px 14px rgba(0, 0, 0, 0.18);
+        animation: float 4s ease-in-out infinite;
+      }
+      .let {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        background: radial-gradient(circle at 35% 30%, var(--a), var(--b));
+        font-size: 40px !important;
+        animation: float 4s ease-in-out infinite;
+      }
+      @keyframes float {
+        50% {
+          transform: translateY(-12px) rotate(4deg);
+        }
+      }
+      .art .big {
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        top: 40px;
+        transform: translateX(-50%);
+        font-size: 100px;
+        line-height: 1;
+      }
+      .body {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 24px 26px 28px;
+        flex: 1;
+      }
+      h2 {
+        margin: 0;
+        font: 34px/1.1 var(--display);
+        color: var(--navy);
+      }
+      .body p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+      .body ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 17px;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+      .play {
+        margin-top: auto;
+        align-self: flex-start;
+        text-decoration: none;
+        color: #fff;
+        font: 700 24px/1 var(--body);
+        padding: 16px 40px;
+        border-radius: 12px;
+        background: linear-gradient(#2f6bff, #1238c8);
+        box-shadow: 0 5px 0 #0a2390;
+      }
+      .play:hover {
+        filter: brightness(1.08);
+      }
+      .play:focus-visible {
+        outline: 4px solid var(--navy);
+        outline-offset: 3px;
+      }
+      .notes {
+        margin-top: 34px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+        gap: 14px 28px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 22px;
+        padding: 22px 26px;
+      }
+      .notes h3 {
+        margin: 0 0 4px;
+        font: 600 14px/1.2 var(--body);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--blue);
+      }
+      .notes p {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.45;
+      }
+      kbd {
+        font: 600 14px var(--body);
+        background: #fff;
+        border: 2px solid var(--navy);
+        border-radius: 6px;
+        padding: 1px 7px;
+      }
+      footer {
+        margin-top: 28px;
+        font-size: 16px;
+        color: var(--ink);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bal,
+        .let {
+          animation: none;
+        }
+      }
+    </style>
+
+    <main>
+      <div class="eyebrow">Demo build · SMART English</div>
+      <h1>Shooter Games</h1>
+      <p class="lede">
+        Two classroom games from the Adobe Animate days, rebuilt in plain HTML,
+        CSS and JavaScript. Open one and click or tap to shoot.
+      </p>
+
+      <div class="cards">
+        <article class="card">
+          <div class="art" aria-hidden="true">
+            <span class="big">🐰</span>
+            <i
+              class="bal"
+              style="--a: #ff8ac8; --b: #e0207f; left: 12%; top: 36px"
+              >9</i
+            >
+            <i
+              class="bal"
+              style="
+                --a: #6fd0ff;
+                --b: #1b86e0;
+                left: 72%;
+                top: 22px;
+                animation-delay: -1.2s;
+              "
+              >16</i
+            >
+            <i
+              class="bal"
+              style="
+                --a: #a6e86a;
+                --b: #3aa63a;
+                left: 26%;
+                top: 96px;
+                animation-delay: -2.1s;
+              "
+              >3</i
+            >
+            <i
+              class="bal"
+              style="
+                --a: #ffe45a;
+                --b: #f0a500;
+                left: 80%;
+                top: 100px;
+                animation-delay: -0.6s;
+              "
+              >20</i
+            >
+          </div>
+          <div class="body">
+            <h2>Number Shooter</h2>
+            <p>
+              The board shows a number word. Shoot the balloon with the matching
+              number.
+            </p>
+            <ul>
+              <li>9 stars, one number word each</li>
+              <li>5 lives and 2 minutes per star</li>
+              <li>Balloons speed up as time runs out</li>
+            </ul>
+            <a class="play" href="number-shooter.html">Play</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="art" aria-hidden="true">
+            <span class="big">🚁</span>
+            <i
+              class="let"
+              style="--a: #ffe45a; --b: #f0a500; left: 14%; top: 30px"
+              >c</i
+            >
+            <i
+              class="let"
+              style="
+                --a: #cba6ff;
+                --b: #7b3fe4;
+                left: 74%;
+                top: 34px;
+                animation-delay: -1.4s;
+              "
+              >h</i
+            >
+            <i
+              class="let"
+              style="
+                --a: #6fd0ff;
+                --b: #1b86e0;
+                left: 24%;
+                top: 104px;
+                animation-delay: -2.2s;
+              "
+              >r</i
+            >
+            <i
+              class="let"
+              style="
+                --a: #ff8ac8;
+                --b: #e0207f;
+                left: 82%;
+                top: 108px;
+                animation-delay: -0.7s;
+              "
+              >p</i
+            >
+          </div>
+          <div class="body">
+            <h2>Letter Shooter</h2>
+            <p>
+              A picture and a word with a gap. Shoot the missing letters, and
+              never the same letter twice.
+            </p>
+            <ul>
+              <li>12 picture words</li>
+              <li>1 or 2 missing letters per word</li>
+              <li>A repeat shot or a wrong letter costs a life</li>
+            </ul>
+            <a class="play" href="letter-shooter.html">Play</a>
+          </div>
+        </article>
+      </div>
+
+      <section class="notes" aria-label="Presenting tips">
+        <div>
+          <h3>Presenting</h3>
+          <p>
+            Press <kbd>F</kbd> for full screen. Both games scale to any screen
+            or projector.
+          </p>
+        </div>
+        <div>
+          <h3>Controls</h3>
+          <p>
+            Click or tap to shoot. <kbd>M</kbd> mutes sound,
+            <kbd>Esc</kbd> returns to the menu.
+          </p>
+        </div>
+        <div>
+          <h3>Built with</h3>
+          <p>
+            No framework and no build step. One shared engine, one small file
+            per game.
+          </p>
+        </div>
+      </section>
+      <footer>© SMART ENGLISH · Created by Ehsan Ashourzadeh</footer>
+    </main>
+  </body>
+</html>
